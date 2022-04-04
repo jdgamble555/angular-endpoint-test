@@ -1,7 +1,8 @@
-import { isPlatformServer } from '@angular/common';
+import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { firstValueFrom, isObservable, Observable } from 'rxjs';
+import { Component, Inject, Optional, PLATFORM_ID } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { REQUEST } from '@nguniversal/express-engine/tokens';
 
 declare const Zone: any;
 
@@ -15,45 +16,36 @@ export class AppComponent {
   title = 'angular-test';
 
   data!: string;
-
+  baseURL!: string;
   isServer: Boolean;
 
   constructor(
     @Inject(PLATFORM_ID) platformId: Object,
+    @Optional() @Inject(REQUEST) private request: any,
+    @Inject(DOCUMENT) private document: Document,
     private http: HttpClient
   ) {
     this.isServer = isPlatformServer(platformId);
 
-    // get data, wait to load
-    this.data = (this.waitFor(this.getData()) as any).r;
+    // get base url
+    if (this.isServer) {
+      this.baseURL = this.request.headers.referer;
+    } else {
+      this.baseURL = this.document.location.origin + '/';
+    }
+
+    // grab data
+    this.getData().then((data) => this.data = data.r);
   }
 
   async getData(): Promise<any> {
     return await firstValueFrom(
-      this.http.get('/api/me', {
+      this.http.get(this.baseURL + 'api/me', {
         headers: {
           'Content-Type': 'application/json',
         },
         responseType: 'json'
       })
     );
-  }
-
-  async waitFor<T>(prom: Promise<T> | Observable<T>): Promise<T> {
-    if (isObservable(prom)) {
-      prom = firstValueFrom(prom);
-    }
-    const macroTask = Zone.current
-      .scheduleMacroTask(
-        `WAITFOR-${Math.random()}`,
-        () => { },
-        {},
-        () => { }
-      );
-    return prom.then((p: T) => {
-      macroTask.invoke();
-      return p;
-    });
-  }
-
+  };
 }
