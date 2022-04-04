@@ -1,14 +1,14 @@
 import { isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, isObservable, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   title = 'angular-test';
 
@@ -21,10 +21,9 @@ export class AppComponent implements OnInit {
     private http: HttpClient
   ) {
     this.isServer = isPlatformServer(platformId);
-  }
 
-  async ngOnInit(): Promise<void> {
-    this.data = (await this.getData()).r;
+    // get data, wait to load
+    this.data = (this.waitFor(this.getData()) as any).r;
   }
 
   async getData(): Promise<any> {
@@ -36,6 +35,23 @@ export class AppComponent implements OnInit {
         responseType: 'json'
       })
     );
+  }
+
+  async waitFor<T>(prom: Promise<T> | Observable<T>): Promise<T> {
+    if (isObservable(prom)) {
+      prom = firstValueFrom(prom);
+    }
+    const macroTask = Zone.current
+      .scheduleMacroTask(
+        `WAITFOR-${Math.random()}`,
+        () => { },
+        {},
+        () => { }
+      );
+    return prom.then((p: T) => {
+      macroTask.invoke();
+      return p;
+    });
   }
 
 }
