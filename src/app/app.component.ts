@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { firstValueFrom, isObservable, Observable } from 'rxjs';
 
+declare const Zone: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
