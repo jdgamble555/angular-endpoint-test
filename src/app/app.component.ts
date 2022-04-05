@@ -1,6 +1,6 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, Optional, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, Optional, PLATFORM_ID } from '@angular/core';
 import { firstValueFrom, isObservable, Observable } from 'rxjs';
 import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { makeStateKey, TransferState } from '@angular/platform-browser';
@@ -13,7 +13,7 @@ declare const Zone: any;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   title = 'angular-test';
 
@@ -29,7 +29,10 @@ export class AppComponent {
     private http: HttpClient
   ) {
     this.isServer = isPlatformServer(platformId);
+  }
 
+  async ngOnInit(): Promise<void> {
+    
     if (this.isServer) {
 
       // get data on server, save state
@@ -51,6 +54,7 @@ export class AppComponent {
         this.getData().then((data: any) => this.data = data.r);
       }
     }
+
   }
 
   // get data from REST API
