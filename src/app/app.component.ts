@@ -32,17 +32,16 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    
+
     if (this.isServer) {
 
       // get data on server, save state
       // get base url from request obj
       this.baseURL = this.request.headers.referer;
-      this.waitFor(this.getData()
-      .then((data: any) => {
-        this.data = data.r;
-        this.saveState('posts', this.data);
-      }));
+      const data = await this.getData()
+      this.data = data.r;
+      this.saveState('posts', this.data);
+
     } else {
 
       // retrieve state on browser
@@ -54,7 +53,6 @@ export class AppComponent implements OnInit {
         this.getData().then((data: any) => this.data = data.r);
       }
     }
-
   }
 
   // get data from REST API
@@ -108,5 +106,4 @@ export class AppComponent implements OnInit {
       return p;
     });
   }
-
 }
