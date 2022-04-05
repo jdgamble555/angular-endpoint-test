@@ -1,9 +1,11 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Optional, PLATFORM_ID } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, isObservable, Observable } from 'rxjs';
 import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { makeStateKey, TransferState } from '@angular/platform-browser';
+
+declare const Zone: any;
 
 
 @Component({
@@ -33,10 +35,10 @@ export class AppComponent {
       // get data on server, save state
       // get base url from request obj
       this.baseURL = this.request.headers.referer;
-      this.getData().then((data: any) => {
+      this.waitFor(this.getData().then((data: any) => {
          this.data = data.r;
          this.saveState('posts', this.data);
-      });
+      }));
     } else {
 
       // retrieve state on browser
@@ -82,4 +84,26 @@ export class AppComponent {
   hasState<T>(key: string) {
     return this.transferState.hasKey<T>(makeStateKey(key));
   }
+
+  //
+  // ZoneJS force await function
+  //
+
+  async waitFor<T>(prom: Promise<T> | Observable<T>): Promise<T> {
+    if (isObservable(prom)) {
+      prom = firstValueFrom(prom);
+    }
+    const macroTask = Zone.current
+      .scheduleMacroTask(
+        `WAITFOR-${Math.random()}`,
+        () => { },
+        {},
+        () => { }
+      );
+    return prom.then((p: T) => {
+      macroTask.invoke();
+      return p;
+    });
+  }
+
 }
