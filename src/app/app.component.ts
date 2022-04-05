@@ -35,9 +35,10 @@ export class AppComponent {
       // get data on server, save state
       // get base url from request obj
       this.baseURL = this.request.headers.referer;
-      this.waitFor(this.getData().then((data: any) => {
-         this.data = data.r;
-         this.saveState('posts', this.data);
+      this.waitFor(this.getData()
+      .then((data: any) => {
+        this.data = data.r;
+        this.saveState('posts', this.data);
       }));
     } else {
 
@@ -54,14 +55,12 @@ export class AppComponent {
 
   // get data from REST API
   async getData(): Promise<any> {
-    return await firstValueFrom(
-      this.http.get(this.baseURL + 'api/me', {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        responseType: 'json'
-      })
-    )
+    return firstValueFrom(this.http.get(this.baseURL + 'api/me', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      responseType: 'json'
+    }));
   };
 
   //
