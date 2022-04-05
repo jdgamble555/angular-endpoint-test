@@ -33,7 +33,10 @@ export class AppComponent {
       // get data on server, save state
       // get base url from request obj
       this.baseURL = this.request.headers.referer;
-      this.getData();
+      this.getData().then((data: any) => {
+         this.data = data.r;
+         this.saveState('posts', this.data);
+      });
     } else {
 
       // retrieve state on browser
@@ -42,7 +45,7 @@ export class AppComponent {
         this.data = this.getState('posts');
       } else {
         this.baseURL = this.document.location.origin + '/';
-        this.getData();
+        this.getData().then((data: any) => this.data = data.r);
       }
     }
   }
@@ -56,7 +59,7 @@ export class AppComponent {
         },
         responseType: 'json'
       })
-    ).then((data: any) => this.data = data.r);
+    )
   };
 
   //
