@@ -1,11 +1,14 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { RestService } from './rest.service';
+
+
+const getRest = (rest: RestService) => async () => await rest.getData();
 
 @NgModule({
   declarations: [
@@ -23,7 +26,12 @@ import { HttpClientModule } from '@angular/common/http';
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],
-  providers: [],
+  providers: [{
+    provide: APP_INITIALIZER,
+    deps: [RestService],
+    useFactory: getRest,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
