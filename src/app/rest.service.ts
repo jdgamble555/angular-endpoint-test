@@ -31,8 +31,7 @@ export class RestService {
       // get data on server, save state
       // get base url from request obj
       this.baseURL = this.request.headers.referer;
-      const data = await this.fetchData();
-      this.data = data.r;
+      this.data = await this.fetchData();
       this.saveState('rest', this.data);
 
     } else {
@@ -43,19 +42,18 @@ export class RestService {
         this.data = this.getState('rest');
       } else {
         this.baseURL = this.document.location.origin + '/';
-        const data = await this.fetchData();
-        this.data = data.r;
+        this.data = await this.fetchData();
       }
     }
   }
 
   private async fetchData(): Promise<any> {
-    return firstValueFrom(this.http.get(this.baseURL + 'api/me', {
+    return (await firstValueFrom<any>(this.http.get(this.baseURL + 'api/me', {
       headers: {
         'Content-Type': 'application/json',
       },
       responseType: 'json'
-    }));
+    }))).r;
   }
 
   // state transfer functions
