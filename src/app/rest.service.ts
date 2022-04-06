@@ -17,7 +17,7 @@ export class RestService {
   constructor(
     private transferState: TransferState,
     private http: HttpClient,
-    @Inject(PLATFORM_ID) platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) private document: Document,
     @Optional() @Inject(REQUEST) private request: any
   ) {
@@ -30,7 +30,8 @@ export class RestService {
 
       // get data on server, save state
       // get base url from request obj
-      this.baseURL = this.request.headers.referer;
+      const host: string = this.request.get('host');
+      this.baseURL = (host.startsWith('localhost') ? 'http://' : 'https://') + host;
       this.data = await this.fetchData();
       this.saveState('rest', this.data);
 
@@ -41,14 +42,14 @@ export class RestService {
       if (this.hasState('rest')) {
         this.data = this.getState('rest');
       } else {
-        this.baseURL = this.document.location.origin + '/';
+        this.baseURL = this.document.location.origin;
         this.data = await this.fetchData();
       }
     }
   }
 
   private async fetchData(): Promise<any> {
-    return (await firstValueFrom<any>(this.http.get(this.baseURL + 'api/me', {
+    return (await firstValueFrom<any>(this.http.get(this.baseURL + '/api/me', {
       headers: {
         'Content-Type': 'application/json',
       },

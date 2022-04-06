@@ -15,7 +15,5 @@ export class AppComponent {
 
   constructor(private rest: RestService) {
     this.data = this.rest.data;
-    console.log(this.data);
   }
-
 }

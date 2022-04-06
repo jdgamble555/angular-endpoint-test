@@ -7,9 +7,6 @@ import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
 import { RestService } from './rest.service';
 
-
-const getRest = (rest: RestService) => async () => await rest.getData();
-
 @NgModule({
   declarations: [
     AppComponent
@@ -29,7 +26,7 @@ const getRest = (rest: RestService) => async () => await rest.getData();
   providers: [{
     provide: APP_INITIALIZER,
     deps: [RestService],
-    useFactory: getRest,
+    useFactory: (rest: RestService) => async () => await rest.getData(),
     multi: true
   }],
   bootstrap: [AppComponent]
