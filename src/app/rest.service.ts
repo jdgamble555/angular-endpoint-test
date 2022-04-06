@@ -21,7 +21,7 @@ export class RestService {
     @Inject(DOCUMENT) private document: Document,
     @Optional() @Inject(REQUEST) private request: any
   ) {
-    this.isServer = isPlatformServer(platformId);
+    this.isServer = isPlatformServer(this.platformId);
   }
 
   async getData(): Promise<void> {
