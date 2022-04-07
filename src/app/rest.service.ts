@@ -32,10 +32,7 @@ export class RestService {
 
       // process test for env variables
       if (process.env['test']) {
-        console.log(process.env);
-      }
-      if (process.env['NEXT_PUBLIC_TEST']) {
-        console.log(process.env);
+        this.state.saveState('env', process.env);
       }
 
       //
@@ -49,6 +46,10 @@ export class RestService {
       this.state.saveState('rest', this.data);
 
     } else {
+
+      if (this.state.hasState('env')) {
+        console.log(this.state.getState('env'));
+      }
 
       //
       // retrieve state on browser
