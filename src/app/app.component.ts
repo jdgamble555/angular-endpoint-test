@@ -20,7 +20,7 @@ export class AppComponent {
   ) {
     this.data = this.rest.data;
 
-    if (typeof window === undefined) {
+    if (typeof window === 'undefined') {
       if (process.env['firebase']) {
         this.state.saveState('fb', process.env['firebase']);
       }
