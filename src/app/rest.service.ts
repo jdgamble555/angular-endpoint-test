@@ -34,6 +34,9 @@ export class RestService {
       if (process.env['test']) {
         console.log(process.env);
       }
+      if (process.env['NEXT_PUBLIC_TEST']) {
+        console.log(process.env);
+      }
 
       //
       // get data on server, save state
