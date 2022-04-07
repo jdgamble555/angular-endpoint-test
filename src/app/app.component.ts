@@ -23,10 +23,10 @@ export class AppComponent {
     if (typeof window === undefined) {
       if (process.env['firebase']) {
         this.state.saveState('fb', process.env['firebase']);
-      } else {
-        if (this.state.hasState('fb')) {
-          console.log(this.state.getState('fb'));
-        }
+      }
+    } else {
+      if (this.state.hasState('fb')) {
+        console.log(this.state.getState('fb'));
       }
     }
   }
