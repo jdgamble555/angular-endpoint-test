@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-
 import { RestService } from './rest.service';
-import { StateService } from './state.service';
-
 
 @Component({
   selector: 'app-root',
@@ -14,21 +11,7 @@ export class AppComponent {
   title = 'angular-test';
   data: string;
 
-  constructor(
-    private rest: RestService,
-    private state: StateService
-  ) {
+  constructor(private rest: RestService) {
     this.data = this.rest.data;
-
-    if (typeof window === 'undefined') {
-      if (process.env['firebase']) {
-        const fb = JSON.parse(process.env['firebase']);
-        this.state.saveState('fb', fb.authDomain);
-      }
-    } else {
-      if (this.state.hasState('fb')) {
-        console.log(this.state.getState('fb'));
-      }
-    }
   }
 }
