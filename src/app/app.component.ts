@@ -22,7 +22,7 @@ export class AppComponent {
 
     if (typeof window === 'undefined') {
       if (process.env['firebase']) {
-        const fb: any = process.env['firebase'];
+        const fb = JSON.parse(process.env['firebase']);
         this.state.saveState('fb', fb.authDomain);
       }
     } else {
