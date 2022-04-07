@@ -5,7 +5,6 @@ import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { firstValueFrom } from 'rxjs';
 import { StateService } from './state.service';
 
-declare const process: any;
 
 @Injectable({
   providedIn: 'root'
@@ -30,11 +29,6 @@ export class RestService {
 
     if (this.isServer) {
 
-      // process test for env variables
-      if (process.env['test']) {
-        this.state.saveState('env', process.env);
-      }
-
       //
       // get data on server, save state
       // get base url from request obj
@@ -46,10 +40,6 @@ export class RestService {
       this.state.saveState('rest', this.data);
 
     } else {
-
-      if (this.state.hasState('env')) {
-        console.log(this.state.getState('env'));
-      }
 
       //
       // retrieve state on browser
